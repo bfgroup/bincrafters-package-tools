@@ -39,6 +39,9 @@ def _get_builder():
     ###
     # Output collected recipe information in the builds logs
     ###
+    recipe_conanfile = get_recipe_path()
+    printer.print_message("Recipe path: {}".format(str(recipe_conanfile)))
+
     recipe_is_installer = is_installer()
     printer.print_message("Is the package an installer for executable(s)? {}"
                           .format(str(recipe_is_installer)))
@@ -47,6 +50,10 @@ def _get_builder():
         recipe_is_unconditional_header_only = is_unconditional_header_only()
         printer.print_message("Is the package header only? {}"
                               .format(str(recipe_is_unconditional_header_only)))
+
+        recipe_is_testable_header_only = is_testable_header_only()
+        printer.print_message("Is the package testable header only? {}"
+                              .format(str(recipe_is_testable_header_only)))
 
         if not recipe_is_unconditional_header_only:
             recipe_is_conditional_header_only = is_conditional_header_only()
@@ -71,6 +78,9 @@ def _get_builder():
         arch = os.getenv("ARCH", "x86_64")
         builder = build_shared.get_builder(**kwargs)
         builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
+    elif is_testable_header_only():
+        builder = build_shared.get_builder(**kwargs)
+        builder.add()
     elif recipe_is_unconditional_header_only:
         builder = build_shared.get_builder(**kwargs)
         builder.add()
