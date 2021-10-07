@@ -201,10 +201,11 @@ def test_format_mixed_remotes(set_mixed_remote_address):
 
 def test_default_remote_address(set_upload_address):
     builder = build_autodetect._get_builder()
+    print("REMOTES:", builder.remotes_manager._remotes)
     assert 2 <= len(builder.remotes_manager._remotes)
     remote = builder.remotes_manager._remotes[0]
     assert "remotefoo" == remote.name
     assert "https://api.bintray.com/conan/foo/bar" == remote.url
-    remote = builder.remotes_manager._remotes[-1]
+    remote = builder.remotes_manager._remotes[1]
     assert "upload_repo" == remote.name
     assert "https://api.bintray.com/conan/bincrafters/public-conan" == remote.url
