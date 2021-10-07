@@ -1,5 +1,5 @@
 import os
-from bincrafters.build_shared import get_recipe_path, inspect_value_from_recipe
+from bincrafters.build_shared import get_recipe_path, inspect_value_from_recipe, get_version
 
 _recipe_path = os.path.dirname(get_recipe_path())
 
@@ -93,12 +93,16 @@ def autodetect() -> str:
 DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION = "one_recipe_one_file"
 DIR_STRUCTURE_ONE_RECIPE_MANY_VERSIONS = "one_recipe_many_versions"
 DIR_STRUCTURE_CCI = "cci_many_recipes_many_versions"
+DIR_STRUCTURE_STANDALONE_RECIPE_MANY_VERSIONS = "standalone_recipe_many_versions"
 
 
 def autodetect_directory_structure() -> str:
     """ Return the directory type as classified above this method
     """
     pwd = os.getcwd()
+
+    if os.path.exists(os.path.join(pwd, "conanfile.py")) and os.path.exists(os.path.join(pwd, "conandata.yml")) and not get_version(os.path.join(pwd, "conanfile.py")):
+        return DIR_STRUCTURE_STANDALONE_RECIPE_MANY_VERSIONS
 
     if os.path.exists(os.path.join(pwd, "conanfile.py")):
         return DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION
