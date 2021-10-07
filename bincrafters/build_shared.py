@@ -98,6 +98,14 @@ def get_repo_branch_from_ci():
     repobranch_azp = os.getenv("BUILD_SOURCEBRANCH", "")
     if repobranch_azp.startswith("refs/pull/"):
         repobranch_azp = os.getenv("SYSTEM_PULLREQUEST_TARGETBRANCH", "")
+    def _clean_branch(branch):
+        return branch[11:] if branch.startswith("refs/heads/") else branch
+    repobranch_azp = _clean_branch(repobranch_azp)
+    repobranch_g = _clean_branch(os.getenv("GITHUB_REF", ""))
+    if os.getenv("GITHUB_EVENT_NAME", "") == "pull_request":
+        repobranch_g = os.getenv("GITHUB_BASE_REF", "")
+
+    return repobranch_a or repobranch_azp or repobranch_g
 
 
 def get_ci_vars():
