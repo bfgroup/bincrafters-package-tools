@@ -53,6 +53,13 @@ def set_upload_address():
 
 
 @pytest.fixture()
+def set_upload_address_false():
+    os.environ["CONAN_UPLOAD"] = "False"
+    yield
+    del os.environ["CONAN_UPLOAD"]
+
+
+@pytest.fixture()
 def set_remote_address():
     os.environ["CONAN_REMOTES"] = "https://api.bintray.com/conan/foo/bar@False@remotefoo"
     yield
@@ -205,6 +212,16 @@ def test_default_remote_address(set_upload_address):
     remote = builder.remotes_manager._remotes[0]
     assert "remotefoo" == remote.name
     assert "https://api.bintray.com/conan/foo/bar" == remote.url
-    remote = builder.remotes_manager._remotes[-1]
-    assert "upload_repo" == remote.name or "remote2" == remote.name
-    assert "https://api.bintray.com/conan/bincrafters/public-conan" == remote.url
+    remote = builder.remotes_manager._remotes[1]
+    # windows and linux use different names. containers?
+    assert remote.name in ["bincrafters", "upload_repo"]
+    assert "https://bincrafters.jfrog.io/artifactory/api/conan/public-conan" == remote.url
+
+
+def test_no_upload(set_upload_address_false):
+    builder = build_autodetect._get_builder()
+    assert 1 == len(builder.remotes_manager._remotes)
+    remote = builder.remotes_manager._remotes[0]
+    # windows and linux use different names. containers?
+    assert remote.name in ["bincrafters", "upload_repo"]
+    assert "https://bincrafters.jfrog.io/artifactory/api/conan/public-conan" == remote.url

@@ -63,12 +63,7 @@ def get_name_from_recipe(recipe=None):
 
 def get_version_from_recipe(recipe=None):
     version = inspect_value_from_recipe(attribute="version", recipe_path=recipe)
-    if version:
-        return version
-    match = get_value_from_recipe(r'''\s+version\s*=\s*["'](\S*)["']''', recipe=recipe)
-    if match:
-        return match.groups()[0]
-    return None
+    return version or get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def is_shared(recipe=None):
@@ -172,14 +167,15 @@ def get_conan_vars(recipe=None, kwargs={}):
 
 
 def get_user_repository(username, repository_name):
-    return "https://api.bintray.com/conan/{0}/{1}".format(username.lower(), repository_name)
+    return "https://{0}.jfrog.io/artifactory/api/conan/{1}".format(username.lower(), repository_name)
 
 
 def get_conan_upload(username):
     upload = os.getenv("CONAN_UPLOAD")
     if upload:
         if upload.lower() in ["false", "no", "off", "0"]:
-            return ""
+            return False
+
         return upload.split('@') if '@' in upload else upload
 
     repository_name = os.getenv("BINTRAY_REPOSITORY", BINCRAFTERS_REPO_NAME)
@@ -188,7 +184,10 @@ def get_conan_upload(username):
 
 def get_conan_upload_param(username, kwargs):
     if "upload" not in kwargs:
-        kwargs["upload"] = get_conan_upload(username)
+        if get_conan_upload(username):
+            kwargs["upload"] = get_conan_upload(username)
+    elif str(kwargs["upload"]).lower() in ["false", "no", "off", "0"]:
+        del kwargs["upload"]
     return kwargs
 
 
@@ -203,12 +202,13 @@ def get_conan_remotes(username, kwargs):
                     remote = RemotesManager._get_remote_from_str(remote, var_name=remote)
         else:
             # While redundant, this moves upload remote to position 0.
-            remotes = [get_conan_upload(username)]
+            remotes = [get_conan_upload(username)] if get_conan_upload(username) else []
             # Add bincrafters repository for other users, e.g. if the package would
             # require other packages from the bincrafters repo.
             bincrafters_user = BINCRAFTERS_USERNAME
             if username != bincrafters_user:
-                remotes.append(get_conan_upload(bincrafters_user))
+                if get_conan_upload(bincrafters_user):
+                    remotes.append(get_conan_upload(bincrafters_user))
 
             # Force Bincrafters repo on remotes
             if BINCRAFTERS_REPO_URL not in remotes:
