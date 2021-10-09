@@ -171,7 +171,7 @@ def get_user_repository(username, repository_name):
 
 
 def get_conan_upload(username):
-    if os.getenv("BPT_NO_UPLOAD", "") in ["true", "yes", "on", "1"]:
+    if os.getenv("BPT_NO_UPLOAD", "").lower() in ["true", "yes", "on", "1"]:
         return False
 
     upload = os.getenv("CONAN_UPLOAD")
@@ -183,11 +183,14 @@ def get_conan_upload(username):
 
 
 def get_conan_upload_param(username, kwargs):
-    if "upload" not in kwargs:
-        if get_conan_upload(username):
-            kwargs["upload"] = get_conan_upload(username)
-    elif str(kwargs["upload"]).lower() in ["false", "no", "off", "0"]:
-        del kwargs["upload"]
+    if not get_conan_upload(username):
+        try:
+            del kwargs["upload"]
+        except:
+            pass
+        return kwargs
+    if "upload" not in kwargs and get_conan_upload(username):
+        kwargs["upload"] = get_conan_upload(username)
     return kwargs
 
 
