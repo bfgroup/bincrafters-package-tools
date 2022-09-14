@@ -209,7 +209,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
     def _parse_recipe_directory(path: str, path_filter: str = None, recipe_displayname: str = None):
         changed_dirs = _detect_changed_directories(path_filter=path_filter)
         config_file = os.path.join(path, "config.yml")
-        config_yml = yaml.load(open(config_file, "r"))
+        config_yml = yaml.load(open(config_file, "r"), yaml.Loader)
         for version, version_attr in config_yml["versions"].items():
             version_build_value = version_attr.get("build", "full")
             # If we are on a branch like testing/3.0.0 then only build 3.0.0
@@ -241,7 +241,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
 
     def _parse_standalone_recipe(path: str, path_filter: str = None, recipe_displayname: str = None):
         data_file = os.path.join(path, "conandata.yml")
-        data_yml = yaml.load(open(data_file, "r"))
+        data_yml = yaml.load(open(data_file, "r"), yaml.Loader)
         for version, _ in data_yml["sources"].items():
             working_matrix = _get_base_config(
                 recipe_directory=path,
