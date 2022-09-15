@@ -40,6 +40,33 @@ def _run_windows_jobs_on_gha():
 def _do_discard_duplicated_build_ids() -> bool:
     return get_bool_from_env("BPT_MATRIX_DISCARD_DUPLICATE_BUILD_IDS", default="true")
 
+_configs = {
+    "ubuntu-gcc-4.9": {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-latest", "dockerImage": "conanio/gcc49:latest"},
+    "ubuntu-gcc-5": {"name": "GCC 5", "compiler": "GCC", "version": "5", "os": "ubuntu-latest", "dockerImage": "conanio/gcc5:latest"},
+    "ubuntu-gcc-6": {"name": "GCC 6", "compiler": "GCC", "version": "6", "os": "ubuntu-latest", "dockerImage": "conanio/gcc6:latest"},
+    "ubuntu-gcc-7": {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-latest", "dockerImage": "conanio/gcc7:latest"},
+    "ubuntu-gcc-8": {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-latest", "dockerImage": "conanio/gcc8:latest"},
+    "ubuntu-gcc-9": {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-latest", "dockerImage": "conanio/gcc9:latest"},
+    "ubuntu-gcc-10": {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-latest", "dockerImage": "conanio/gcc10:latest"},
+    "ubuntu-gcc-11": {"name": "GCC 11", "compiler": "GCC", "version": "11", "os": "ubuntu-latest", "dockerImage": "conanio/gcc11:latest"},
+    "ubuntu-clang-7": {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-latest", "dockerImage": "conanio/clang7:latest"},
+    "ubuntu-clang-8": {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-latest", "dockerImage": "conanio/clang8:latest"},
+    "ubuntu-clang-9": {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-latest", "dockerImage": "conanio/clang9:latest"},
+    "ubuntu-clang-10": {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-latest", "dockerImage": "conanio/clang10:latest"},
+    "ubuntu-clang-11": {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-latest", "dockerImage": "conanio/clang11:latest"},
+    "ubuntu-clang-12": {"name": "CLANG 12", "compiler": "CLANG", "version": "12", "os": "ubuntu-latest", "dockerImage": "conanio/clang12:latest"},
+    "macos-xcode-11": {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.7", "os": "macOS-latest"},
+    "macos-xcode-12": {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.5.1", "os": "macOS-latest"},
+    "macos-xcode-13": {"name": "macOS Apple-Clang 13", "compiler": "APPLE_CLANG", "version": "13.2.1", "os": "macOS-latest"},
+    "win-vs-2019": {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
+    "win-vs-2022": {"name": "Windows VS 2022", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
+}
+
+def _get_configs(*configs):
+    result = []
+    for config in configs:
+        result.append(_configs[config])
+    return result
 
 def _get_base_config(recipe_directory: str, platform: str, split_by_build_types: bool, build_set: str = "full", recipe_type: str = ""):
     if recipe_type == "":
@@ -60,62 +87,25 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
         run_macos = _run_macos_jobs_on_gha()
         run_windows = _run_windows_jobs_on_gha()
         if recipe_type == "installer":
-            matrix["config"] = [
-                {"name": "Installer Linux", "compiler": "GCC", "version": "7", "os": "ubuntu-latest", "dockerImage": "conanio/gcc7"},
-                {"name": "Installer Windows", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-                {"name": "Installer macOS", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macos-10.15"}
-            ]
+            matrix["config"] = _get_configs("ubuntu-gcc-11", "win-xcode-13", "win-vs-2022")
             matrix_minimal["config"] = matrix["config"].copy()
         elif recipe_type == "unconditional_header_only":
-            matrix["config"] = [
-                {"name": "Header-only Linux", "compiler": "CLANG", "version": "8", "os": "ubuntu-latest"},
-                {"name": "Header-only Windows", "compiler": "VISUAL", "version": "16", "os": "windows-latest"}
-            ]
+            matrix["config"] = _get_configs("ubuntu-clang-12", "win-vs-2022")
             matrix_minimal["config"] = matrix["config"].copy()
         else:
-            matrix["config"] = [
-                {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-latest"},
-                {"name": "GCC 5", "compiler": "GCC", "version": "5", "os": "ubuntu-latest"},
-                {"name": "GCC 6", "compiler": "GCC", "version": "6", "os": "ubuntu-latest"},
-                {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-latest"},
-                {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-latest"},
-                {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-latest"},
-                {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-latest"},
-                {"name": "GCC 11", "compiler": "GCC", "version": "11", "os": "ubuntu-latest"},
-                {"name": "CLANG 4.0", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-latest"},
-                {"name": "CLANG 5.0", "compiler": "CLANG", "version": "5.0", "os": "ubuntu-latest"},
-                {"name": "CLANG 6.0", "compiler": "CLANG", "version": "6.0", "os": "ubuntu-latest"},
-                {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-latest"},
-                {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-latest"},
-                {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-latest"},
-                {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-latest"},
-                {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-latest"},
-                {"name": "CLANG 12", "compiler": "CLANG", "version": "12", "os": "ubuntu-latest"},
-            ]
+            matrix["config"] = _get_configs(
+                "ubuntu-gcc-4.9", "ubuntu-gcc-5", "ubuntu-gcc-6", "ubuntu-gcc-7",
+                "ubuntu-gcc-8", "ubuntu-gcc-9", "ubuntu-gcc-10", "ubuntu-gcc-11",
+                "ubuntu-clang-7", "ubuntu-clang-8", "ubuntu-clang-9",
+                "ubuntu-clang-10", "ubuntu-clang-11", "ubuntu-clang-12")
+            matrix_minimal["config"] = _get_configs("ubuntu-gcc-11", "ubuntu-clang-12")
             if run_macos:
-                matrix["config"] += [
-                    {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.15"},
-                    {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                    {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                ]
+                matrix["config"] += _get_configs(
+                    "macos-xcode-11", "macos-xcode-12", "macos-xcode-13")
+                matrix_minimal["config"] += _get_configs("macos-xcode-13")
             if run_windows:
-                matrix["config"] += [
-                    {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
-                    {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-                    {"name": "Windows VS 2022 - Testing", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
-                ]
-            matrix_minimal["config"] = [
-                {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-latest"},
-                {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-latest"},
-            ]
-            if run_macos:
-                matrix_minimal["config"] += [
-                    {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                ]
-            if run_windows:
-                matrix_minimal["config"] += [
-                    {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-                ]
+                matrix["config"] += _get_configs("win-vs-2019", "win-vs-2022")
+                matrix_minimal["config"] += _get_configs("win-vs-2022")
     elif platform == "azp":
         if _is_gha_existing() and recipe_type in ["installer", "unconditional_header_only", "recipe_manual_full_matrix"]:
             matrix["config"] = []
@@ -127,7 +117,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15"},
                 {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
                 {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-                {"name": "Windows VS 2022 - Testing", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
+                {"name": "Windows VS 2022", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
             ]
             matrix_minimal["config"] = [
                 {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
