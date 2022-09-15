@@ -41,20 +41,24 @@ def _do_discard_duplicated_build_ids() -> bool:
     return get_bool_from_env("BPT_MATRIX_DISCARD_DUPLICATE_BUILD_IDS", default="true")
 
 _configs = {
-    "ubuntu-gcc-4.9": {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-latest", "dockerImage": "conanio/gcc49:latest"},
-    "ubuntu-gcc-5": {"name": "GCC 5", "compiler": "GCC", "version": "5", "os": "ubuntu-latest", "dockerImage": "conanio/gcc5:latest"},
-    "ubuntu-gcc-6": {"name": "GCC 6", "compiler": "GCC", "version": "6", "os": "ubuntu-latest", "dockerImage": "conanio/gcc6:latest"},
-    "ubuntu-gcc-7": {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-latest", "dockerImage": "conanio/gcc7:latest"},
-    "ubuntu-gcc-8": {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-latest", "dockerImage": "conanio/gcc8:latest"},
-    "ubuntu-gcc-9": {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-latest", "dockerImage": "conanio/gcc9:latest"},
-    "ubuntu-gcc-10": {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-latest", "dockerImage": "conanio/gcc10:latest"},
-    "ubuntu-gcc-11": {"name": "GCC 11", "compiler": "GCC", "version": "11", "os": "ubuntu-latest", "dockerImage": "conanio/gcc11:latest"},
-    "ubuntu-clang-7": {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-latest", "dockerImage": "conanio/clang7:latest"},
-    "ubuntu-clang-8": {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-latest", "dockerImage": "conanio/clang8:latest"},
-    "ubuntu-clang-9": {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-latest", "dockerImage": "conanio/clang9:latest"},
-    "ubuntu-clang-10": {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-latest", "dockerImage": "conanio/clang10:latest"},
-    "ubuntu-clang-11": {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-latest", "dockerImage": "conanio/clang11:latest"},
-    "ubuntu-clang-12": {"name": "CLANG 12", "compiler": "CLANG", "version": "12", "os": "ubuntu-latest", "dockerImage": "conanio/clang12:latest"},
+    "ubuntu-gcc-5": {"name": "GCC 5", "compiler": "GCC", "version": "5", "os": "ubuntu-latest", "dockerImage": "teeks99/gcc-ubuntu:5"},
+    "ubuntu-gcc-6": {"name": "GCC 6", "compiler": "GCC", "version": "6", "os": "ubuntu-latest", "dockerImage": "teeks99/gcc-ubuntu:6"},
+    "ubuntu-gcc-7": {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-latest", "dockerImage": "teeks99/gcc-ubuntu:7"},
+    "ubuntu-gcc-8": {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-latest", "dockerImage": "teeks99/gcc-ubuntu:8"},
+    "ubuntu-gcc-9": {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-latest", "dockerImage": "teeks99/gcc-ubuntu:9"},
+    "ubuntu-gcc-10": {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-latest", "dockerImage": "teeks99/gcc-ubuntu:10"},
+    "ubuntu-gcc-11": {"name": "GCC 11", "compiler": "GCC", "version": "11", "os": "ubuntu-latest", "dockerImage": "teeks99/gcc-ubuntu:11"},
+    "ubuntu-gcc-12": {"name": "GCC 12", "compiler": "GCC", "version": "12", "os": "ubuntu-latest", "dockerImage": "teeks99/gcc-ubuntu:12"},
+    "ubuntu-clang-7": {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:7"},
+    "ubuntu-clang-8": {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:8"},
+    "ubuntu-clang-9": {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:9"},
+    "ubuntu-clang-10": {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:10"},
+    "ubuntu-clang-11": {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:11"},
+    "ubuntu-clang-12": {"name": "CLANG 12", "compiler": "CLANG", "version": "12", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:12"},
+    "ubuntu-clang-13": {"name": "CLANG 13", "compiler": "CLANG", "version": "13", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:13"},
+    "ubuntu-clang-14": {"name": "CLANG 14", "compiler": "CLANG", "version": "14", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:14"},
+    "ubuntu-clang-15": {"name": "CLANG 15", "compiler": "CLANG", "version": "15", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:15"},
+    "ubuntu-clang-16": {"name": "CLANG 16", "compiler": "CLANG", "version": "16", "os": "ubuntu-latest", "dockerImage": "teeks99/clang-ubuntu:16"},
     "macos-xcode-11": {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.7", "os": "macOS-latest"},
     "macos-xcode-12": {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.5.1", "os": "macOS-latest"},
     "macos-xcode-13": {"name": "macOS Apple-Clang 13", "compiler": "APPLE_CLANG", "version": "13.2.1", "os": "macOS-latest"},
@@ -94,11 +98,13 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             matrix_minimal["config"] = matrix["config"].copy()
         else:
             matrix["config"] = _get_configs(
-                "ubuntu-gcc-4.9", "ubuntu-gcc-5", "ubuntu-gcc-6", "ubuntu-gcc-7",
+                "ubuntu-gcc-5", "ubuntu-gcc-6", "ubuntu-gcc-7",
                 "ubuntu-gcc-8", "ubuntu-gcc-9", "ubuntu-gcc-10", "ubuntu-gcc-11",
                 "ubuntu-clang-7", "ubuntu-clang-8", "ubuntu-clang-9",
-                "ubuntu-clang-10", "ubuntu-clang-11", "ubuntu-clang-12")
-            matrix_minimal["config"] = _get_configs("ubuntu-gcc-11", "ubuntu-clang-12")
+                "ubuntu-clang-10", "ubuntu-clang-11", "ubuntu-clang-12",
+                "ubuntu-clang-13", "ubuntu-clang-14", "ubuntu-clang-15",
+                "ubuntu-clang-16")
+            matrix_minimal["config"] = _get_configs("ubuntu-gcc-12", "ubuntu-clang-16")
             if run_macos:
                 matrix["config"] += _get_configs(
                     "macos-xcode-11", "macos-xcode-12", "macos-xcode-13")
