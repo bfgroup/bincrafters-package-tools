@@ -99,7 +99,8 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
         else:
             matrix["config"] = _get_configs(
                 "ubuntu-gcc-5", "ubuntu-gcc-6", "ubuntu-gcc-7",
-                "ubuntu-gcc-8", "ubuntu-gcc-9", "ubuntu-gcc-10", "ubuntu-gcc-11",
+                "ubuntu-gcc-8", "ubuntu-gcc-9", "ubuntu-gcc-10",
+                "ubuntu-gcc-11", "ubuntu-gcc-12",
                 "ubuntu-clang-7", "ubuntu-clang-8", "ubuntu-clang-9",
                 "ubuntu-clang-10", "ubuntu-clang-11", "ubuntu-clang-12",
                 "ubuntu-clang-13", "ubuntu-clang-14", "ubuntu-clang-15",
