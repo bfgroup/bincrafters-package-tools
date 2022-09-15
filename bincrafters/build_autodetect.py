@@ -105,13 +105,14 @@ def run_autodetect():
     os.system('conan config set storage.download_cache="{}"'.format(tmpdir))
     os.system('conan config set general.revisions_enabled=1')
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] =\
-        "apt install python3-pip; "+\
         "conan config set storage.download_cache='{}'; ".format(tmpdir)+\
         "conan config set general.revisions_enabled=1 "
     conan_docker_run_options = os.environ.get('CONAN_DOCKER_RUN_OPTIONS','')
     conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
     os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
     os.environ['CONAN_PIP_USE_SUDO'] = "False"
+    os.environ['CONAN_DOCKER_PIP_COMMAND'] =\
+        "apt install python3-pip; pip"
 
     ###
     # Enabling installing system_requirements
