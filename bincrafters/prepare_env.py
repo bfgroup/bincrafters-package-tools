@@ -114,7 +114,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
             "--name conan_runner",
             docker_image,
             command))
-        _proc_run('docker stop {}'.format(docker_image))
+        _proc_run('docker stop conan_runner')
 
     if platform == "gha" and len(docker_image) > 0:
         _proc_run('docker pull "{}"'.format(docker_image))
