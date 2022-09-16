@@ -111,8 +111,6 @@ def run_autodetect():
     conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
     os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
     os.environ['CONAN_PIP_USE_SUDO'] = "False"
-    os.environ['CONAN_DOCKER_PIP_COMMAND'] =\
-        "apt install python3-pip; pip"
 
     ###
     # Enabling installing system_requirements

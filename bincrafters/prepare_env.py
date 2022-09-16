@@ -13,6 +13,10 @@ def prepare_env(platform: str, config: json, select_config: str = None):
     if select_config:
         config = config[select_config]
 
+    def _proc_run(args, check=False):
+        print(">>", args)
+        subprocess.run(args, shell=True, check=check)
+
     def _set_env_variable(var_name: str, value: str):
         print("{} = {}".format(var_name, value))
         os.environ[var_name] = value
@@ -20,22 +24,16 @@ def prepare_env(platform: str, config: json, select_config: str = None):
             if compiler in ["VISUAL", "MSVC"]:
                 os.system('echo {}={}>> {}'.format(var_name, value, os.getenv("GITHUB_ENV")))
             else:
-                subprocess.run(
-                    'echo "{}={}" >> $GITHUB_ENV'.format(var_name, value),
-                    shell=True
-                )
+                _proc_run(
+                    'echo "{}={}" >> $GITHUB_ENV'.format(var_name, value))
 
         if platform == "azp":
             if compiler in ["VISUAL", "MSVC"]:
-                subprocess.run(
-                    'echo ##vso[task.setvariable variable={}]{}'.format(var_name, value),
-                    shell=True
-                )
+                _proc_run(
+                    'echo ##vso[task.setvariable variable={}]{}'.format(var_name, value))
             else:
-                subprocess.run(
-                    'echo "##vso[task.setvariable variable={}]{}"'.format(var_name, value),
-                    shell=True
-                )
+                _proc_run(
+                    'echo "##vso[task.setvariable variable={}]{}"'.format(var_name, value))
 
     compiler = config["compiler"]
     compiler_version = config["version"]
@@ -44,6 +42,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
 
     _set_env_variable("BPT_CWD", config["cwd"])
     _set_env_variable("CONAN_VERSION", config["recipe_version"])
+    _set_env_variable("CONAN_DOCKER_IMAGE_SKIP_PULL", "True")
 
     if compiler == "APPLE_CLANG":
         if "." not in compiler_version:
@@ -75,16 +74,12 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 "12.0": "/Applications/Xcode_12.4.app",
             }
             if compiler_version in xcode_mapping:
-                subprocess.run(
-                    'sudo xcode-select -switch "{}"'.format(xcode_mapping[compiler_version]),
-                    shell=True
-                )
+                _proc_run(
+                    'sudo xcode-select -switch "{}"'.format(xcode_mapping[compiler_version]))
                 print('executing: xcode-select -switch "{}"'.format(xcode_mapping[compiler_version]))
 
-            subprocess.run(
-                'clang++ --version',
-                shell=True
-            )
+            _proc_run(
+                'clang++ --version')
 
         if compiler in ["VISUAL", "MSVC"]:
             with open(os.path.join(os.path.dirname(__file__), "prepare_env_azp_windows.ps1"), "r") as file:
@@ -95,16 +90,26 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 file.write(content)
                 file.close()
 
-            subprocess.run("pip install --upgrade cmake", shell=True, check=True)
-            subprocess.run("powershell -file {}".format(os.path.join(os.getcwd(), "execute.ps1")), shell=True, check=True)
+            _proc_run("pip install --upgrade cmake", check=True)
+            _proc_run("powershell -file {}".format(os.path.join(os.getcwd(), "execute.ps1")), check=True)
 
     if platform == "gha" and (compiler == "GCC" or compiler == "CLANG"):
-        subprocess.run('docker system prune --all --force --volumes', shell=True)
-        subprocess.run('sudo rm -rf "/usr/local/share/boost"', shell=True)
-        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/CodeQL"', shell=True)
-        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/Ruby"', shell=True)
-        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/boost"', shell=True)
-        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/go"', shell=True)
-        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/node"', shell=True)
+        _proc_run('docker system prune --all --force --volumes')
+        _proc_run('sudo rm -rf "/usr/local/share/boost"')
+        _proc_run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/CodeQL"')
+        _proc_run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/Ruby"')
+        _proc_run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/boost"')
+        _proc_run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/go"')
+        _proc_run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/node"')
+    
+    def _docker_run(command):
+        _proc_run('docker run {} "{}" /bin/sh -c "{}"'.format(
+            "--name conan_runner -v '/tmp/conan':'/tmp/conan'",
+            docker_image,
+            command))
 
-    subprocess.run("conan user", shell=True)
+    if platform == "gha" and len(docker_image) > 0:
+        _proc_run('docker pull "{}"'.format(docker_image))
+        _docker_run("apt install python3-pip")
+
+    _proc_run("conan user")
