@@ -116,6 +116,9 @@ def prepare_env(platform: str, config: json, select_config: str = None):
             command))
         _proc_run('docker stop conan_runner')
         _proc_run('docker commit conan_runner {}'.format(docker_image))
+        _proc_run('docker rm conan_runner')
+        _proc_run('docker ps')
+        _proc_run('docker images')
 
     if platform == "gha" and len(docker_image) > 0:
         _proc_run('docker pull "{}"'.format(docker_image))
