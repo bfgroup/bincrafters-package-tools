@@ -3,6 +3,11 @@ import os
 import subprocess
 
 
+def _flush_output():
+    sys.stderr.flush()
+    sys.stdout.flush()
+
+
 def prepare_env(platform: str, config: json, select_config: str = None):
     if platform != "gha" and platform != "azp":
         raise ValueError("Only GitHub Actions and Azure Pipelines is supported at this point.")
@@ -15,6 +20,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
 
     def _proc_run(args, check=False):
         print(">>", args)
+        _flush_output()
         subprocess.run(args, shell=True, check=check)
 
     def _set_env_variable(var_name: str, value: str):
@@ -104,7 +110,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
     
     def _docker_run(command):
         _proc_run('docker run {} "{}" /bin/sh -c "{}"'.format(
-            "--name conan_runner -v '/tmp/conan':'/tmp/conan'",
+            "--name conan_runner",
             docker_image,
             command))
 
