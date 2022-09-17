@@ -125,5 +125,6 @@ def prepare_env(platform: str, config: json, select_config: str = None):
         _docker_run("apt install -y python3-pip && pwd")
         _set_env_variable("CONAN_DOCKER_HOME", "")
         _set_env_variable("CONAN_DOCKER_SHELL", "/bin/sh -c")
+        _set_env_variable("CONAN_SYSREQUIRES_SUDO", "0")
 
     _proc_run("conan user")
