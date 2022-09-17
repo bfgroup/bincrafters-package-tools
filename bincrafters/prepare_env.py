@@ -110,30 +110,18 @@ def prepare_env(platform: str, config: json, select_config: str = None):
         _proc_run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/node"')
     
     def _docker_run(command):
-        _proc_run('docker run {} "{}" /bin/sh -c "{} && ls -aF /usr/bin"'.format(
+        _proc_run('docker run {} "{}" /bin/sh -c "{}"'.format(
             "--name conan_runner",
             docker_image,
             command))
         _proc_run('docker commit conan_runner {}'.format(docker_image))
-        # _proc_run('docker commit conan_runner {}-tmp'.format(docker_image))
         _proc_run('docker stop conan_runner')
         _proc_run('docker rm conan_runner')
-        # _proc_run('docker image rm {}'.format(docker_image))
-        # _proc_run('docker tag {}-tmp {}'.format(docker_image, docker_image))
-        # _proc_run('docker image rm {}-tmp'.format(docker_image))
         _proc_run('docker ps')
         _proc_run('docker images')
-        #######################
-        _proc_run('docker run {} "{}" /bin/sh -c "{}"'.format(
-            "--name conan_runner",
-            docker_image,
-            "ls -aF /usr/bin/"))
-        _proc_run('docker stop conan_runner')
-        _proc_run('docker rm conan_runner')
 
     if platform == "gha" and len(docker_image) > 0:
         _proc_run('docker pull "{}"'.format(docker_image))
         _docker_run("apt install -y python3-pip")
-        _set_env_variable("CONAN_DOCKER_PIP_COMMAND", "/usr/bin/pip3")
 
     _proc_run("conan user")
