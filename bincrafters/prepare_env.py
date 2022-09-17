@@ -115,8 +115,10 @@ def prepare_env(platform: str, config: json, select_config: str = None):
             docker_image,
             command))
         _proc_run('docker stop conan_runner')
-        _proc_run('docker commit conan_runner {}'.format(docker_image))
+        _proc_run('docker commit conan_runner {}-tmp'.format(docker_image))
         _proc_run('docker rm conan_runner')
+        _proc_run('docker image rm {}'.format(docker_image))
+        _proc_run('docker tag {}-tmp {}'.format(docker_image, docker_image))
         _proc_run('docker ps')
         _proc_run('docker images')
 
