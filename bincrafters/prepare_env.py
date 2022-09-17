@@ -127,7 +127,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
         _proc_run('docker run {} "{}" /bin/sh -c "{}"'.format(
             "--name conan_runner",
             docker_image,
-            "ls -laF /usr/bin/pip*"))
+            "ls -aF /usr/bin/"))
 
     if platform == "gha" and len(docker_image) > 0:
         _proc_run('docker pull "{}"'.format(docker_image))
