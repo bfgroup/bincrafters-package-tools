@@ -109,7 +109,6 @@ def run_autodetect():
         "conan config set general.revisions_enabled=1 "
     conan_docker_run_options = os.environ.get('CONAN_DOCKER_RUN_OPTIONS','')
     conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
-    # conan_docker_run_options += " --restart=always"
     os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
     os.environ['CONAN_PIP_USE_SUDO'] = "False"
 

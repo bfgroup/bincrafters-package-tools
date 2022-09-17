@@ -122,6 +122,6 @@ def prepare_env(platform: str, config: json, select_config: str = None):
 
     if platform == "gha" and len(docker_image) > 0:
         _proc_run('docker pull "{}"'.format(docker_image))
-        _docker_run("apt install -y python3-pip")
+        _docker_run("apt install -y python3-pip && mkdir /home/conan && cd /home/conan")
 
     _proc_run("conan user")
