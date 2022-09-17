@@ -114,14 +114,20 @@ def prepare_env(platform: str, config: json, select_config: str = None):
             "--name conan_runner",
             docker_image,
             command))
-        _proc_run('docker commit conan_runner {}-tmp'.format(docker_image))
+        _proc_run('docker commit conan_runner {}'.format(docker_image))
+        # _proc_run('docker commit conan_runner {}-tmp'.format(docker_image))
         _proc_run('docker stop conan_runner')
         _proc_run('docker rm conan_runner')
-        _proc_run('docker image rm {}'.format(docker_image))
-        _proc_run('docker tag {}-tmp {}'.format(docker_image, docker_image))
-        _proc_run('docker image rm {}-tmp'.format(docker_image))
+        # _proc_run('docker image rm {}'.format(docker_image))
+        # _proc_run('docker tag {}-tmp {}'.format(docker_image, docker_image))
+        # _proc_run('docker image rm {}-tmp'.format(docker_image))
         _proc_run('docker ps')
         _proc_run('docker images')
+        #######################
+        _proc_run('docker run {} "{}" /bin/sh -c "{}"'.format(
+            "--name conan_runner",
+            docker_image,
+            "ls -laF /usr/bin/pip*"))
 
     if platform == "gha" and len(docker_image) > 0:
         _proc_run('docker pull "{}"'.format(docker_image))
