@@ -122,7 +122,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
 
     if platform == "gha" and len(docker_image) > 0:
         _proc_run('docker pull "{}"'.format(docker_image))
-        _docker_run("apt install -y python3-pip && pwd")
+        _docker_run("apt install -y python3-pip pkg-config")
         _set_env_variable("CONAN_DOCKER_HOME", "")
         _set_env_variable("CONAN_DOCKER_SHELL", "/bin/sh -c")
         _set_env_variable("CONAN_SYSREQUIRES_SUDO", "0")
