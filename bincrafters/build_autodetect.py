@@ -116,7 +116,7 @@ def run_autodetect():
     # Enabling installing system_requirements
     ###
     os.environ["CONAN_SYSREQUIRES_MODE"] = "enabled"
-    os.environ["CONAN_OPTIONS"] = "-c conan profile update conf.tools.system.package_manager:mode=install"
+    os.environ["CONAN_OPTIONS"] = "conf.tools.system.package_manager:mode=install"
 
     ###
     # Detect and execute custom build.py file if existing
