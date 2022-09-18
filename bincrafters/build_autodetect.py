@@ -106,8 +106,7 @@ def run_autodetect():
     os.system('conan config set general.revisions_enabled=1')
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] =\
         "conan config set storage.download_cache='{}' ; ".format(tmpdir)+\
-        "conan config set general.revisions_enabled=1 ; "+\
-        "conan profile update conf.tools.system.package_manager:mode=install default "
+        "conan config set general.revisions_enabled=1 "
     conan_docker_run_options = os.environ.get('CONAN_DOCKER_RUN_OPTIONS','')
     conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
     os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
@@ -117,6 +116,7 @@ def run_autodetect():
     # Enabling installing system_requirements
     ###
     os.environ["CONAN_SYSREQUIRES_MODE"] = "enabled"
+    os.environ["CONAN_OPTIONS"] = "-c conan profile update conf.tools.system.package_manager:mode=install"
 
     ###
     # Detect and execute custom build.py file if existing
