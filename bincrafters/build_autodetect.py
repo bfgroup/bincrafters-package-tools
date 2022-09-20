@@ -114,7 +114,7 @@ echo "conf.tools.system.package_manager:mode=install" >> $HOME/.conan/global.con
 
     os.system('conan config set storage.download_cache="{}"'.format(tmpdir))
     os.system('conan config set general.revisions_enabled=1')
-    os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] = "cat '{0}' && '{}'".format(setup_sh)
+    os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] = "cat '{0}' && '{0}'".format(setup_sh)
     conan_docker_run_options = os.environ.get('CONAN_DOCKER_RUN_OPTIONS','')
     conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
     os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
