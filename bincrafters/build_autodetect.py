@@ -108,7 +108,7 @@ def run_autodetect():
 #!/bin/sh
 conan config set storage.download_cache='{0}'
 conan config set general.revisions_enabled=1
-echo "conf.tools.system.package_manager:mode=install" >> $HOME/.conan/global.conf
+echo "tools.system.package_manager:mode=install" >> $HOME/.conan/global.conf
 """.format(tmpdir))
     os.chmod(setup_sh, mode=0o777)
 
