@@ -102,12 +102,17 @@ def run_autodetect():
     # In some cases Python may ignore the mode of makedirs, do it again explicitly with chmod
     os.chmod(tmpdir, mode=0o777)
 
+    with open(os.path.join(tmpdir, "global.conf"), "w") as f:
+        f.write("""
+conf.tools.system.package_manager:mode=install
+""")
+
     os.system('conan config set storage.download_cache="{}"'.format(tmpdir))
     os.system('conan config set general.revisions_enabled=1')
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] =\
         "conan config set storage.download_cache='{}' ; ".format(tmpdir)+\
         "conan config set general.revisions_enabled=1 ; "+\
-        "conan config set conf.tools.system.package_manager:mode=install "
+        "cp '{}/global.conf' ~/.conan/global.conf".format(tmpdir)
     conan_docker_run_options = os.environ.get('CONAN_DOCKER_RUN_OPTIONS','')
     conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
     os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
