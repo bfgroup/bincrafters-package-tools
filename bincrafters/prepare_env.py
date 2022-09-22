@@ -74,16 +74,12 @@ def prepare_env(platform: str, config: json, select_config: str = None):
 
     if platform == "gha" or platform == "azp":
         if compiler == "APPLE_CLANG":
-            xcode_mapping = {
-                "9.1": "/Applications/Xcode_9.4.1.app",
-                "10.0": "/Applications/Xcode_10.3.app",
-                "11.0": "/Applications/Xcode_11.5.app",
-                "12.0": "/Applications/Xcode_12.4.app",
-            }
-            if compiler_version in xcode_mapping:
+            xcode_path = "/Applications/Xcode_{0}.app".format(compiler_version)
+            if os.path.exists(xcode_path):
+                print('executing: xcode-select -switch "{}"'.format(xcode_path))
+                _flush_output()
                 _proc_run(
-                    'sudo xcode-select -switch "{}"'.format(xcode_mapping[compiler_version]))
-                print('executing: xcode-select -switch "{}"'.format(xcode_mapping[compiler_version]))
+                    'sudo xcode-select -switch "{}"'.format(xcode_path))
 
             _proc_run(
                 'clang++ --version')
