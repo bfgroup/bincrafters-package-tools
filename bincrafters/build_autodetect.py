@@ -108,7 +108,6 @@ def run_autodetect():
 #!/bin/sh
 conan config set storage.download_cache='{0}'
 conan config set general.revisions_enabled=1
-echo "tools.system.package_manager:mode=install" >> $HOME/.conan/global.conf
 """.format(tmpdir))
     os.chmod(setup_sh, mode=0o777)
 
@@ -124,6 +123,7 @@ echo "tools.system.package_manager:mode=install" >> $HOME/.conan/global.conf
     # Enabling installing system_requirements
     ###
     os.environ["CONAN_SYSREQUIRES_MODE"] = "enabled"
+    os.environ["CONAN_GLOBAL_CONF"] = "tools.system.package_manager:mode=install"
 
     ###
     # Detect and execute custom build.py file if existing
