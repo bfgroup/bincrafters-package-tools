@@ -127,7 +127,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
     if compiler == "APPLE_CLANG":
         _proc_run("conan config init")
         _proc_run("pip3 install --upgrade yq")
-        _proc_run('''yq --yaml-rountrip --in-place '.compiler."apple-clang".version |= . + ["%s"]' ${HOME}/.conan/settings.yml'''%(compiler_version))
+        _proc_run('''yq -Y -i '.compiler."apple-clang".version |= . + ["%s"]' ${HOME}/.conan/settings.yml'''%(compiler_version))
         _proc_run('''yq '.compiler."apple-clang".version' ${HOME}/.conan/settings.yml''')
 
     _proc_run("conan user")
