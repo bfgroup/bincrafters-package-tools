@@ -62,6 +62,7 @@ _configs = {
     "macos-xcode-11": {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.7", "os": "macOS-latest"},
     "macos-xcode-12": {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.5.1", "os": "macOS-latest"},
     "macos-xcode-13": {"name": "macOS Apple-Clang 13", "compiler": "APPLE_CLANG", "version": "13.2.1", "os": "macOS-latest"},
+    "macos-xcode-14": {"name": "macOS Apple-Clang 14", "compiler": "APPLE_CLANG", "version": "14.0.1", "os": "macOS-12"},
     "win-vs-2019": {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
     "win-vs-2022": {"name": "Windows VS 2022", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
 }
@@ -108,8 +109,8 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             matrix_minimal["config"] = _get_configs("ubuntu-gcc-12", "ubuntu-clang-16")
             if run_macos:
                 matrix["config"] += _get_configs(
-                    "macos-xcode-11", "macos-xcode-12", "macos-xcode-13")
-                matrix_minimal["config"] += _get_configs("macos-xcode-13")
+                    "macos-xcode-11", "macos-xcode-12", "macos-xcode-13", "macos-xcode-14")
+                matrix_minimal["config"] += _get_configs("macos-xcode-14")
             if run_windows:
                 matrix["config"] += _get_configs("win-vs-2019", "win-vs-2022")
                 matrix_minimal["config"] += _get_configs("win-vs-2022")
