@@ -49,13 +49,13 @@ def prepare_env(platform: str, config: json, select_config: str = None):
     compiler_version = config["version"]
     docker_image = config.get("dockerImage", "")
     build_type = config.get("buildType", "")
+    cppstds = config.get("cppstds", None)
     conan_compiler = {
         "GCC": 'gcc',
         "CLANG": 'clang',
         "APPLE_CLANG": 'apple-clang',
         "VISUAL": 'Visual Studio'
     }.get(compiler, str(compiler).lower().replace('_', '-'))
-    cppstds = config.get("cppstds", "")
 
     _set_env_variable("BPT_CWD", config["cwd"])
     _set_env_variable("CONAN_VERSION", config["recipe_version"])
@@ -91,13 +91,13 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 break
         return o
 
-    if cppstds == "":
+    if not cppstds:
         settings = {}
         with open(os.path.expanduser(os.path.join("~", ".conan", "settings.yml")), "r") as f:
             settings = yaml.full_load(f)
         cppstds = _get_path(settings, "compiler", conan_compiler, "cppstd")
         if cppstds:
-            cppstds = cppstds[1:-1]
+            cppstds = cppstds[1:]
 
     if cppstds:
         _set_env_variable("CONAN_CPPSTDS", ",".join(cppstds))
