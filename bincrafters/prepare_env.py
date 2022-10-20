@@ -97,7 +97,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
             settings = yaml.full_load(f)
         cppstds = _get_path(settings, "compiler", conan_compiler, "cppstd")
         if cppstds:
-            cppstds = cppstds[1:]
+            cppstds = map(str, cppstds[1:])
 
     if cppstds:
         _set_env_variable("CONAN_CPPSTDS", ",".join(cppstds))
