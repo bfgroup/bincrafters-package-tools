@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import sys
+import yaml
 
 
 def _flush_output():
@@ -42,10 +43,19 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 _proc_run(
                     'echo "##vso[task.setvariable variable={}]{}"'.format(var_name, value))
 
+    _proc_run("conan config init")
+
     compiler = config["compiler"]
     compiler_version = config["version"]
     docker_image = config.get("dockerImage", "")
     build_type = config.get("buildType", "")
+    conan_compiler = {
+        "GCC": 'gcc',
+        "CLANG": 'clang',
+        "APPLE_CLANG": 'apple-clang',
+        "VISUAL": 'Visual Studio'
+    }.get(compiler, str(compiler).lower().replace('_', '-'))
+    cppstds = config.get("cppstds", "")
 
     _set_env_variable("BPT_CWD", config["cwd"])
     _set_env_variable("CONAN_VERSION", config["recipe_version"])
@@ -71,6 +81,26 @@ def prepare_env(platform: str, config: json, select_config: str = None):
 
     if build_type != "":
         _set_env_variable("CONAN_BUILD_TYPES", build_type)
+
+    def _get_path(o, *path):
+        for k in path:
+            if k in o:
+                o = o[k]
+            else:
+                o = None
+                break
+        return o
+
+    if cppstds == "":
+        settings = {}
+        with open(os.path.expanduser(os.path.join("~", ".conan", "settings.yml")), "r") as f:
+            settings = yaml.full_load(f)
+        cppstds = _get_path(settings, "compiler", conan_compiler, "cppstd")
+        if cppstds:
+            cppstds = cppstds[1:-1]
+
+    if cppstds:
+        _set_env_variable("CONAN_CPPSTDS", ",".join(cppstds))
 
     if platform == "gha" or platform == "azp":
         if compiler == "APPLE_CLANG":
@@ -125,7 +155,6 @@ def prepare_env(platform: str, config: json, select_config: str = None):
         _set_env_variable("CONAN_SYSREQUIRES_SUDO", "0")
 
     if compiler == "APPLE_CLANG":
-        _proc_run("conan config init")
         _proc_run("pip3 install --upgrade yq")
         _proc_run('''yq -Y -i '.compiler."apple-clang".version |= . + ["%s"]' ${HOME}/.conan/settings.yml'''%(compiler_version))
         _proc_run('''yq '.compiler."apple-clang".version' ${HOME}/.conan/settings.yml''')
